@@ -25,11 +25,10 @@ import java.net.URL;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    Uri imageUri;
     private static final int PICK_PHOTO_FOR_AVATAR = 1;
     boolean doubleBackToExitPressedOnce = false;
     private Button btn_SelectImage;
-    private Button button;
+    private Uri imageUri;
     private ImageView imgPhoto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
         btn_SelectImage = findViewById(R.id.select_image);
         imgPhoto = findViewById(R.id.img_photo);
-        button = findViewById(R.id.button3);
+                getImage();
         btn_SelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PHOTO_FOR_AVATAR){
-            if (resultCode == Activity.RESULT_OK){
+            if (resultCode == RESULT_OK){
+
                 if (data == null) {
                     return;
                 }
@@ -91,6 +91,23 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+    void getImage(){
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if(Intent.ACTION_SEND.equals(action) && type != null){
+            if(type.startsWith("image/")){
+                handleSetImage(intent);
+            }
+        }
+    }
+    void handleSetImage(Intent intent){
+        Uri img = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if(img != null){
+            imgPhoto.setImageURI(img);
         }
     }
 }
